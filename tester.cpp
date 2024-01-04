@@ -46,8 +46,14 @@
 
     
     //n = write(SocketFD,buff,strlen(buff));
-    n = write(SocketFD,"testowa\n",9);
+    n = write(SocketFD,"8",1);
+    sleep(5);
+    n = write(SocketFD,"testowa\n",8);
     /* perform read write operations ... */
+    sleep(10000);
+    while(true){
+      fgets(buff,255,stdin);
+    }
   
     close(SocketFD);
     return EXIT_SUCCESS;
