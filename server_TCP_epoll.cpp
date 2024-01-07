@@ -2,17 +2,39 @@
 #include <random>
 #include <map>
 #include <chrono>
+#include <algorithm>
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <string.h>
+#include <string>
+#include <cstring>
 #include <netinet/tcp.h>
-#include "constants.h"
 
 using namespace std;
 
+const int PORT = 44444; // port serwera
+const int opt = 1; // dla setsockopt()
+const int maxNumOfPlayers = 4; // maksymalna liczba graczy w jednej grze
+const int maxNumOfGames = 4; // maksymalna liczba gier
+const int maxNumOfConnections = maxNumOfPlayers * maxNumOfGames + 1; // maksymalna liczba połączeń
+const int bufferSize = 4096; // rozmiar bufora
+const int maxEpollEvents = maxNumOfConnections; // maksymalna liczba wydarzeń epoll
+const int timeout = 10; // sekund pomiędzy sygnałami heartbeat
+const char delimiter = ':'; // separator komunikatu
+
 char buf[bufferSize]; // bufor ogólnego przeznaczenia
+
+map<int,map<string,string>> bazaWiedzy = {
+    //{key, val}
+    {1, {
+        {"nazwa", "bohater"},
+        {"klasa", "wojownik"},
+        {"minDiceVal", "2"},
+        {"signDiceVal", "+"},
+        {"effect", "????"}
+    }}
+}; // Baza wiedzy
 
 int randomNumber(int min, int max){
     random_device seed;
@@ -47,10 +69,63 @@ void testClient(int clientFD, int epollFD, epoll_event* event){
     cout << clientBuf<<endl;
 }
 
+// funkcja do testowania komunikatu
+void testClient2(int clientFD, int epollFD, epoll_event* event){
+    char clientBuf[bufferSize]; // bufor klienta
+    memset(&clientBuf, '\0', bufferSize); // reset bufora
+    ssize_t ret;
+    ret = read(clientFD, clientBuf, bufferSize);
+    if(ret==0){ //client disconnected
+        close(clientFD);
+        epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
+        return;
+    }
+    cout << clientBuf<<endl;
+
+    string s(clientBuf);
+    int pos;
+    int msgLen = stoi(s.substr(0, pos = s.find(delimiter))); // długość wiadomości do odczytania
+    for(int i=0; i<bufferSize-pos+1; i++){
+        clientBuf[i] = clientBuf[i + pos+1];
+        clientBuf[i + pos] = '\0';
+    }
+    s = s.substr(pos + 1);
+    
+    //int msgLen = stoi(clientBuf);
+    //memset(&clientBuf, '\0', bufferSize);
+    if(s.length()<msgLen){
+        ret = read(clientFD, clientBuf, msgLen);
+        s = clientBuf;
+    }
+    if(ret==0){
+        //client dc
+        close(clientFD);
+        epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
+        return;
+    }
+    cout << clientBuf<<endl;
+    int key = stoi(s.substr(0, pos = s.find(delimiter)));
+    s = s.substr(pos + 1);
+    string val = s.substr(0, pos = s.find(delimiter));
+    s = s.substr(pos + 1);
+    string operation = s.substr(0, pos = s.find(delimiter));
+
+    memset(&buf, '\0', bufferSize);
+    if(operation=="getVal"){
+        cout<<bazaWiedzy[key][val]<<endl;
+        //write(clientFD, &buf, sizeof(buf));
+        write(clientFD, bazaWiedzy[key][val].c_str(), bazaWiedzy[key][val].length());
+    }else{
+        write(clientFD, "Error!", 6);
+    }
+}
+
 int main(int argc, char **argv){
     
     cout<<"Działamy na porcie "<<PORT<<endl;
     cerr<<"test"<<endl;
+
+    cout<<bazaWiedzy[1]["nazwa"]<<endl;
 
     // Tworzymy strukturę adresową serwera
     sockaddr_in localAddress{
@@ -106,7 +181,7 @@ int main(int argc, char **argv){
     cout << "Server started" << endl;
 
     epoll_event events[maxEpollEvents]; // Tablica zdarzeń epoll
-    map<int, chrono::_V2::steady_clock::time_point> heartbeat; // Do sprawdzania czy klienci żyją
+    //map<int, chrono::_V2::steady_clock::time_point> heartbeat; // Do sprawdzania czy klienci żyją
 
     while(true){
         int numOfEvents = epoll_wait(epollFD, events, maxEpollEvents, timeout); // -1 infinite, 0 instant
@@ -134,11 +209,12 @@ int main(int argc, char **argv){
                     close(clientFD);
                     continue;
                 }
-                heartbeat.insert({clientFD, chrono::steady_clock::now()});
+                //heartbeat.insert({clientFD, chrono::steady_clock::now()});
             } else {
                 // Obsługa klienta
-                testClient(events[i].data.fd, epollFD, &event);
-                heartbeat[events[i].data.fd] = chrono::steady_clock::now();
+                //testClient(events[i].data.fd, epollFD, &event);
+                testClient2(events[i].data.fd, epollFD, &event);
+                //heartbeat[events[i].data.fd] = chrono::steady_clock::now();
             }
         }
         //nie działa
