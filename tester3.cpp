@@ -44,7 +44,6 @@
     //fgets(buff,255,stdin);
     int n;
     n = write(SocketFD,"1:klasa:getVal",256); // id:inner_key:operation
-    n = write(SocketFD,"1:klasa:getVal",256);
     /* perform read write operations ... */
 
     bzero(buff,256);
