@@ -22,33 +22,41 @@ const int bufferSize = 4096; // rozmiar bufora
 const int maxEpollEvents = maxNumOfConnections; // maksymalna liczba wydarzeń epoll
 const int timeout = 10; // sekund pomiędzy sygnałami heartbeat
 const char delimiter = ':'; // separator komunikatu
+const int maxMsgLength = 256; // Maksymalna długość komunikatu
 
 char buf[bufferSize]; // bufor ogólnego przeznaczenia
 
 map<int,map<string,string>> bazaWiedzy = {
-    //{key, val}
+    //{id, {inner_key, val}}
     {1, {
         {"nazwa", "bohater"},
         {"klasa", "wojownik"},
         {"minDiceVal", "2"},
         {"signDiceVal", "+"},
         {"effect", "????"}
+    }},
+    {2, {
+        {"nazwa", "bohater"},
+        {"klasa", "mag"},
+        {"minDiceVal", "5"},
+        {"signDiceVal", "-"},
+        {"effect", "????"}
     }}
 }; // Baza wiedzy
 
-int randomNumber(int min, int max){
+int randomNumber(int min, int max){ // generuje losową liczbę całkowitą z zadanego zakresu
     random_device seed;
     mt19937 gen{seed()};
     uniform_int_distribution<> dist{min, max};
     return dist(gen);
 }
 
-// funkcja do testowania klienta
-void testClient(int clientFD, int epollFD, epoll_event* event){
+// funkcja do testowania komunikatu ze stałą długością wiadomości
+void testClient3(int clientFD, int epollFD, epoll_event* event){
     char clientBuf[bufferSize]; // bufor klienta
     memset(&clientBuf, '\0', bufferSize); // reset bufora
-    ssize_t ret;
-    ret = read(clientFD, clientBuf, bufferSize);
+    ssize_t ret; // ilość bajtów odczytana z socketu
+    ret = read(clientFD, clientBuf, maxMsgLength);
     if(ret==0){ //client disconnected
         close(clientFD);
         epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
@@ -56,54 +64,8 @@ void testClient(int clientFD, int epollFD, epoll_event* event){
     }
     cout << clientBuf<<endl;
 
-    int msgLen = atoi(clientBuf); // długość wiadomości do odczytania
-
-    memset(&clientBuf, '\0', bufferSize);
-    ret = read(clientFD, clientBuf, msgLen);
-    if(ret==0){
-        //client dc
-        close(clientFD);
-        epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
-        return;
-    }
-    cout << clientBuf<<endl;
-}
-
-// funkcja do testowania komunikatu
-void testClient2(int clientFD, int epollFD, epoll_event* event){
-    char clientBuf[bufferSize]; // bufor klienta
-    memset(&clientBuf, '\0', bufferSize); // reset bufora
-    ssize_t ret;
-    ret = read(clientFD, clientBuf, bufferSize);
-    if(ret==0){ //client disconnected
-        close(clientFD);
-        epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
-        return;
-    }
-    cout << clientBuf<<endl;
-
-    string s(clientBuf);
-    int pos;
-    int msgLen = stoi(s.substr(0, pos = s.find(delimiter))); // długość wiadomości do odczytania
-    for(int i=0; i<bufferSize-pos+1; i++){
-        clientBuf[i] = clientBuf[i + pos+1];
-        clientBuf[i + pos] = '\0';
-    }
-    s = s.substr(pos + 1);
-    
-    //int msgLen = stoi(clientBuf);
-    //memset(&clientBuf, '\0', bufferSize);
-    if(s.length()<msgLen){
-        ret = read(clientFD, clientBuf, msgLen);
-        s = clientBuf;
-    }
-    if(ret==0){
-        //client dc
-        close(clientFD);
-        epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
-        return;
-    }
-    cout << clientBuf<<endl;
+    string s(clientBuf); // komunikat
+    int pos; // index
     int key = stoi(s.substr(0, pos = s.find(delimiter)));
     s = s.substr(pos + 1);
     string val = s.substr(0, pos = s.find(delimiter));
@@ -114,18 +76,18 @@ void testClient2(int clientFD, int epollFD, epoll_event* event){
     if(operation=="getVal"){
         cout<<bazaWiedzy[key][val]<<endl;
         //write(clientFD, &buf, sizeof(buf));
-        write(clientFD, bazaWiedzy[key][val].c_str(), bazaWiedzy[key][val].length());
+        //write(clientFD, bazaWiedzy[key][val].c_str(), bazaWiedzy[key][val].length());
+        write(clientFD, bazaWiedzy[key][val].c_str(), maxMsgLength);
+
+        // TODO 
+        // dodać tu potem sprawdzanie czy klient nie umarł w międzyczasie
     }else{
         write(clientFD, "Error!", 6);
     }
 }
 
 int main(int argc, char **argv){
-    
     cout<<"Działamy na porcie "<<PORT<<endl;
-    cerr<<"test"<<endl;
-
-    cout<<bazaWiedzy[1]["nazwa"]<<endl;
 
     // Tworzymy strukturę adresową serwera
     sockaddr_in localAddress{
@@ -142,7 +104,7 @@ int main(int argc, char **argv){
     test = setsockopt(serverFD, SOL_TCP, TCP_KEEPCNT, &opt, sizeof(opt));
     test = setsockopt(serverFD, SOL_TCP, TCP_KEEPINTVL, &opt, sizeof(opt));
     setsockopt(serverFD, SOL_TCP, TCP_USER_TIMEOUT, &opt, sizeof(opt))*/
-    // wrazie co doczytać o SO_KEEPALIVE
+    // Nie działa
 
     // Łączymy gniazdo z adresem
     if(bind(serverFD, (sockaddr*) &localAddress, sizeof(localAddress)) != 0){
@@ -196,6 +158,7 @@ int main(int argc, char **argv){
                 setsockopt(clientFD, SOL_TCP, TCP_KEEPIDLE, &opt, sizeof(opt));
                 setsockopt(clientFD, SOL_TCP, TCP_KEEPCNT, &opt, sizeof(opt));
                 setsockopt(clientFD, SOL_TCP, TCP_KEEPINTVL, &opt, sizeof(opt));*/
+                // Nie działa
                 if(clientFD == -1){
                     cerr << "connection failed"<<endl;
                     continue;
@@ -212,12 +175,12 @@ int main(int argc, char **argv){
                 //heartbeat.insert({clientFD, chrono::steady_clock::now()});
             } else {
                 // Obsługa klienta
-                //testClient(events[i].data.fd, epollFD, &event);
-                testClient2(events[i].data.fd, epollFD, &event);
+                testClient3(events[i].data.fd, epollFD, &event);
                 //heartbeat[events[i].data.fd] = chrono::steady_clock::now();
             }
         }
         //nie działa
+        //mam pomysł jak to zrobić łatwiej i prościej
         /*for(auto iter = heartbeat.cbegin(), next_iter = iter; iter != heartbeat.cend(); iter = next_iter){
             if(((chrono::steady_clock::now()-iter->second).count())/1000000.0 > timeout){
                 //client dead
@@ -228,6 +191,7 @@ int main(int argc, char **argv){
         }*/
     }
 
+    // To się nigdy nie wykona, ale dla poprawności...
     close(serverFD);
     close(epollFD);
     return 0;
