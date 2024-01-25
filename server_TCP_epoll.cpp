@@ -102,8 +102,8 @@ void *playGame(void *args){ // Funkcja gry, odpalana na wątkach
         clientFds.push_back(vec->at(i));
     }
     cout<<"size is: "<<vec->size()<<endl; // Testowe
-    cout<<"1 is: "<<vec->at(0)<<endl;
-    cout<<"2 is: "<<vec->at(1)<<endl;
+    cout<<"player 1 fd is: "<<vec->at(0)<<endl;
+    cout<<"player 2 fd is: "<<vec->at(1)<<endl;
 
      // Przygotowujemy mechanizm epoll dla gry
     int gameEpollFD = epoll_create1(0);
@@ -270,9 +270,6 @@ int main(int argc, char **argv){
                     }
                 }else{
                     lobbies[lobbyID].push_back(clientFD);
-                    /*vector<int> clientFds;
-                    clientFds.push_back(clientFD);
-                    lobbies.insert(lobbyID,clientFds);*/
                 }
                 
                 // Dodajemy klienta do epoll (tymczasowo)
@@ -290,18 +287,15 @@ int main(int argc, char **argv){
                     for(int fd : lobbies[lobbyID]){
                         epoll_ctl(serverEpollFD, EPOLL_CTL_DEL, clientFD, &event);
                     }
-                    /*vector<int> passedVector = lobbies[lobbyID]; 
-                    cout<<passedVector.at(0)<<endl;
-                    cin>>buf;*/
                     pthread_t tid;
                     pthread_create(&tid, NULL, playGame, &lobbies[lobbyID]); 
-                    // wywołanie powoduje memory leak na 16 Bajtów, no trudno
+                    // wywołanie powoduje memory leak na 16 Bajtów, no trudno, nienawidzę c
                 }
                 //heartbeat.insert({clientFD, chrono::steady_clock::now()});
             } else {
                 // Obsługa klienta - serwer główny, czyli rozłączenie
                 //testClient3(events[i].data.fd, epollFD, &event);
-                cout << "ojojoj"<<endl;
+                cout << "ojojoj klient się wykrzaczył"<<endl;
                 disconnectClient(events[i].data.fd, serverEpollFD, &event);
                 //heartbeat[events[i].data.fd] = chrono::steady_clock::now();
             }
