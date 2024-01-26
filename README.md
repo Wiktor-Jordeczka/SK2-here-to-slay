@@ -25,7 +25,7 @@ Implementacja serwera i klienta dla gry "To ja go tnę".
 - ponownie klikamy "graj", pojawi się komunikat o oczekiwaniu
 - gra rozpocznie się, gdy do tego samego pokoju podłączą się dwaj klienci
 
-Scenariusze komunikacji:
+# Scenariusze komunikacji:
 - Klient przesyła id pokoju.
   - Serwer może przesłać informację o przepełnieniu pokoju.
 - Serwer informuje graczy o rozpoczęciu gry.
