@@ -22,7 +22,7 @@ Testowane na: Windows 10, OpenSUSE.
   - [Klient/client.gd](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/Klient/client.gd)
 - Skompilowany program klienta na odpowiedni system operacyjny można pobrać z sekcji Releases, jednak do pełnego funkcjonowania wymagają one również pobrania pakietu z poniższego linku:
   - [LINK DO PAKIETU](https://drive.google.com/drive/folders/1ll6SoiTjh3Qk5ngDhi0BVa83EVsUrhdi?usp=sharing)
-  - [LINK DO REALEASE](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/releases/tag/v1.0)
+  - [LINK DO RELEASE](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/releases/tag/v1.0)
     - SK.exe - wersja na Windows
     - SK.x86_64 - wersja na Linux
 - Pobrany plik pakietu wraz z odpowiednim skompilowanym programem należy umieścić w jednym folderze
