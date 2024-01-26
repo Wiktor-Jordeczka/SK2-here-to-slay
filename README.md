@@ -15,7 +15,7 @@ Implementacja serwera i klienta dla gry "To ja go tnę".
   - Klient/Main.gd
   - Klient/client.gd
 - Skompilowany program klienta na odpowiedni system operacyjny można pobrać z poniższego linku:
-  - TUTAJ LINK DO DYSKU
+  - [TUTAJ LINK DO DYSKU](https://drive.google.com/drive/folders/1ll6SoiTjh3Qk5ngDhi0BVa83EVsUrhdi?usp=sharing)
 - Uruchamiamy program klienta
 - W otwartym okienku wybieramy opcję "połączenie"
 - Konfigurujemy adres ip serwera na taki, jaki ma komputer, na którym uruchomiono serwer (Serwer korzysta z INADDR_ANY)
