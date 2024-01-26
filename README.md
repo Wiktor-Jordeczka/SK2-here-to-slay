@@ -23,8 +23,8 @@ Testowane na: OpenSUSE, Windows 10.
 - Skompilowany program klienta na odpowiedni system operacyjny można pobrać z sekcji Releases, jednak do pełnego funkcjonowania wymagają one również pobrania pakietu z poniższego linku:
   - [LINK DO PAKIETU](https://drive.google.com/drive/folders/1ll6SoiTjh3Qk5ngDhi0BVa83EVsUrhdi?usp=sharing)
   - [LINK DO RELEASE](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/releases/tag/v1.0)
-    - SK.exe - wersja na Windows
     - SK.x86_64 - wersja na Linux
+    - SK.exe - wersja na Windows
 - Pobrany plik pakietu wraz z odpowiednim skompilowanym programem należy umieścić w jednym folderze
 - Uruchamiamy program klienta. W przypadku systemów z rodziny Linux należy wcześniej nadać mu prawo do wykonywania, a następnie uruchomić z wykorzystaniem terminala.
 - W otwartym okienku wybieramy opcję "połączenie"
