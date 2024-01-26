@@ -221,7 +221,7 @@ void *playGame(void *args){ // Funkcja gry, odpalana na wątkach
                         write(fd,  s.c_str(), maxMsgLength);
                     }
                 }
-                disconnectClient(events[i].data.fd, gameEpollFD, &event);
+                //disconnectClient(events[i].data.fd, gameEpollFD, &event); // do testów
                 numOfActivePlayers--;
             }else if(whoseTurn==events[i].data.fd){ // Obsługa komunikatu od gracza
                 // Dekodowanie komunikatu
