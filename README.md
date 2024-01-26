@@ -1,8 +1,11 @@
 # SK2-here-to-slay
 Implementacja serwera i klienta dla gry "To ja go tnę".
+
 Serwer działa na systemach operacyjnych z rodziny Linux.
+
 Klient działa na systemach operacyjnych z rodzin Windows i Linux.
-Testowane na: Windows 10, OpenSUSE
+
+Testowane na: Windows 10, OpenSUSE.
 
 # Jak uruchomić / skompilować
 - Do kompilacji potrzebny jest kompilator g++ najlepiej w wersji 7.5.0
