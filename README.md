@@ -1,5 +1,8 @@
 # SK2-here-to-slay
 Implementacja serwera i klienta dla gry "To ja go tnę".
+Serwer działa na systemach operacyjnych z rodziny Linux.
+Klient działa na systemach operacyjnych z rodzin Windows i Linux.
+Testowane na: Windows 10, OpenSUSE
 
 # Jak uruchomić / skompilować
 - Do kompilacji potrzebny jest kompilator g++ najlepiej w wersji 7.5.0
@@ -10,25 +13,28 @@ Implementacja serwera i klienta dla gry "To ja go tnę".
 - W tym katalogu wywołujemy komendę:
   - g++ -pthread server.cpp
 - Powstały plik wykonywalny uruchamiamy w terminalu, jest to nasz serwer
-- Program klienta, ze względu na swój rozmiar oraz rozmiar projektu nie jest dostępny w repozytorium
+- Program klienta, ze względu na swój rozmiar oraz rozmiar projektu nie jest w całości dostępny w repozytorium
 - W celach podglądu, w repozytorium w podkatalogu Klient umieszczony został główny kod klienta:
-  - Klient/Main.gd
-  - Klient/client.gd
+  - [Klient/Main.gd](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/Klient/Main.gd)
+  - [Klient/client.gd](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/Klient/client.gd)
 - Skompilowany program klienta na odpowiedni system operacyjny można pobrać z sekcji Releases, jednak do pełnego funkcjonowania wymagają one również pobrania pakietu z poniższego linku:
-  - [TUTAJ LINK DO DYSKU](https://drive.google.com/drive/folders/1ll6SoiTjh3Qk5ngDhi0BVa83EVsUrhdi?usp=sharing)
+  - [LINK DO PAKIETU](https://drive.google.com/drive/folders/1ll6SoiTjh3Qk5ngDhi0BVa83EVsUrhdi?usp=sharing)
+  - [LINK DO REALEASE](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/releases/tag/v1.0)
+    - SK.exe - wersja na Windows
+    - SK.x86_64 - wersja na Linux
 - Pobrany plik pakietu wraz z odpowiednim skompilowanym programem należy umieścić w jednym folderze
-- Uruchamiamy program klienta. W przypadku systemów z rodziny Linux należy wcześniej nadać mu prawo do wykonywania.
+- Uruchamiamy program klienta. W przypadku systemów z rodziny Linux należy wcześniej nadać mu prawo do wykonywania
 - W otwartym okienku wybieramy opcję "połączenie"
 - Konfigurujemy adres ip serwera na taki, jaki ma komputer, na którym uruchomiono serwer (Serwer korzysta z INADDR_ANY)
 - Numer portu pozostawiamy na domyślnym 44444
 - Zapisujemy a następnie wybieramy w głównym menu "graj"
-- podajemy numer pokoju: dowolny ciąg znaków [0-9][A-Za-z]
-- ponownie klikamy "graj", pojawi się komunikat o oczekiwaniu
-- gra rozpocznie się, gdy do tego samego pokoju podłączą się dwaj klienci
+- Podajemy numer pokoju: dowolny ciąg znaków [0-9][A-Za-z]
+- Ponownie klikamy "graj", pojawi się komunikat o oczekiwaniu
+- Gra rozpocznie się, gdy do tego samego pokoju podłączą się dwaj klienci
 
 # Opis gry i zasad
 - Na początku rozgrywki każdemu z graczy przypisywany jest przywódca drużyny o określonej klasie, 5 kart, które lądują na "ręce" gracza oraz 3 potwory, które są wspólne dla wszystkich
-- Następnie zgodnie z określoną kolejnością gracze wykonują swoje ruch
+- Następnie zgodnie z określoną kolejnością gracze wykonują swoje ruchy
 - Lista dostępnych ruchów:
   - Dobranie karty (koszt 1 Energii), realizowane przez kliknięcie w przycisk reprezentujący stos kart
   - Zagranie Bohatera (koszt 1 Energii), realizowane przez kliknięcie karty bohatera znajdującej się na "ręce"
@@ -39,10 +45,10 @@ Implementacja serwera i klienta dla gry "To ja go tnę".
   - Warunkiem pozwalającym na zawalczenie z potworem jest spełnienie wymagań podanych na karcie potwora, gdzie każde kółko symbolizuje posiadanie dowolnego bohatera w drużynie, badź bohatera o konkretnej klasie
   - Następnie odbywa się "rzut kośćmi", którego wynik pokazuje się na ekranie
   - Jeśli jest on wyższy bądź równy wartości wskazanej na karcie potwora (oznaczonej zielonym kwadratem) graczowi udaje się zabić tego potwora, w przeciwnym razie nic się nie dzieje
-  - W moemencie gdy na ekranie widnieje wartość "rzutu kośćmi" każdy z graczy może zagrać kartę modyfikatora, która odpowiendio obniży lub podwyższy wynik "rzutu kośćmi", aż do momentu zaakceptowania wyniku przez gracza wyzywającego potwora poprzez kliknięcie przycisku "OK"
+  - W momencie gdy na ekranie widnieje wartość "rzutu kośćmi" każdy z graczy może zagrać kartę modyfikatora, która odpowiednio obniży lub podwyższy wynik "rzutu kośćmi", aż do momentu zaakceptowania wyniku przez gracza wyzywającego potwora poprzez kliknięcie przycisku "OK"
 - Warunki zwycięstwa:
   - Zabicie 3 potworów
-  - Zebranie co najmniej po 1 bohaterze kazdej z klas (wlicza się również klasa przywódcy drużyny), bohaterowie ów muszą zostać "zagrani"
+  - Zebranie co najmniej po 1 bohaterze każdej z klas (wlicza się również klasa przywódcy drużyny), ów bohaterowie muszą zostać "zagrani"
 
 # Scenariusze komunikacji:
 - Klient przesyła id pokoju.
