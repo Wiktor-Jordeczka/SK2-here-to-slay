@@ -20,7 +20,7 @@ Testowane na: OpenSUSE, Windows 10.
 - W celach podglądu, w repozytorium w podkatalogu Klient umieszczony został główny kod klienta:
   - [Klient/Main.gd](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/Klient/Main.gd)
   - [Klient/client.gd](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/Klient/client.gd)
-- Skompilowany program klienta na odpowiedni system operacyjny można pobrać z sekcji Releases, jednak do pełnego funkcjonowania wymagają one również pobrania pakietu z poniższego linku:
+- Skompilowany program klienta na odpowiedni system operacyjny można pobrać z sekcji Releases, jednak do pełnego funkcjonowania wymaga on również pobrania pakietu z poniższego linku:
   - [LINK DO PAKIETU](https://drive.google.com/drive/folders/1ll6SoiTjh3Qk5ngDhi0BVa83EVsUrhdi?usp=sharing)
   - [LINK DO RELEASE](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/releases/tag/v1.0)
     - SK.x86_64 - wersja na Linux
