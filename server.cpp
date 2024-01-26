@@ -36,41 +36,6 @@ int randomNumber(int min, int max){ // generuje losową liczbę całkowitą z za
     return dist(gen);
 }
 
-// funkcja do testowania komunikatu ze stałą długością wiadomości
-void testClient3(int clientFD, int epollFD, epoll_event* event){
-    char clientBuf[bufferSize]; // bufor klienta
-    memset(&clientBuf, '\0', bufferSize); // reset bufora
-    ssize_t ret; // ilość bajtów odczytana z socketu
-    ret = read(clientFD, clientBuf, maxMsgLength);
-    if(ret==0){ //client disconnected
-        close(clientFD);
-        epoll_ctl(epollFD, EPOLL_CTL_DEL, clientFD, event);
-        return;
-    }
-    cout << clientBuf<<endl;
-
-    string s(clientBuf); // komunikat
-    int pos; // index
-    int key = stoi(s.substr(0, pos = s.find(delimiter)));
-    s = s.substr(pos + 1);
-    string val = s.substr(0, pos = s.find(delimiter));
-    s = s.substr(pos + 1);
-    string operation = s.substr(0, pos = s.find(delimiter));
-
-    memset(&buf, '\0', bufferSize);
-    if(operation=="getVal"){
-        //cout<<bazaWiedzy[key][val]<<endl;
-        //write(clientFD, &buf, sizeof(buf));
-        //write(clientFD, bazaWiedzy[key][val].c_str(), bazaWiedzy[key][val].length());
-        //write(clientFD, bazaWiedzy[key][val].c_str(), maxMsgLength);
-
-        // TODO 
-        // dodać tu potem sprawdzanie czy klient nie umarł w międzyczasie
-    }else{
-        write(clientFD, "Error!", 6);
-    }
-}
-
 // funkcja do rozłączania klienta
 void disconnectClient(int clientFD, int epollFD, epoll_event* event){
     close(clientFD);
@@ -435,12 +400,7 @@ int main(int argc, char **argv){
     // Tworzymy gniazdo
     int serverFD = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     int test;
-    test = setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT/* | SO_KEEPALIVE*/, &opt, sizeof(opt));
-    /*test = setsockopt(serverFD, SOL_TCP, TCP_KEEPIDLE, &opt, sizeof(opt));
-    test = setsockopt(serverFD, SOL_TCP, TCP_KEEPCNT, &opt, sizeof(opt));
-    test = setsockopt(serverFD, SOL_TCP, TCP_KEEPINTVL, &opt, sizeof(opt));
-    setsockopt(serverFD, SOL_TCP, TCP_USER_TIMEOUT, &opt, sizeof(opt))*/
-    // Nie działa
+    test = setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
     // Łączymy gniazdo z adresem
     if(bind(serverFD, (sockaddr*) &localAddress, sizeof(localAddress)) != 0){
@@ -479,7 +439,6 @@ int main(int argc, char **argv){
     cout << "Server started" << endl;
 
     epoll_event events[maxEpollEvents]; // Tablica zdarzeń epoll
-    //map<int, chrono::_V2::steady_clock::time_point> heartbeat; // Do sprawdzania czy klienci żyją
 
     map<string,vector<int>> lobbies; // pokoje <id_pokoju, wskażniki_na_wektory<fd klientów>>
 
@@ -491,10 +450,6 @@ int main(int argc, char **argv){
                 sockaddr_in clientAddress; // adres klienta
                 socklen_t cal = sizeof(clientAddress);
                 int clientFD = accept(serverFD, (sockaddr*) &clientAddress, &cal);
-                /*setsockopt(clientFD, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(opt));
-                setsockopt(clientFD, SOL_TCP, TCP_KEEPIDLE, &opt, sizeof(opt));
-                setsockopt(clientFD, SOL_TCP, TCP_KEEPCNT, &opt, sizeof(opt));
-                setsockopt(clientFD, SOL_TCP, TCP_KEEPINTVL, &opt, sizeof(opt));*/
                 // Nie działa
                 if(clientFD == -1){
                     cerr << "connection failed"<<endl;
@@ -544,25 +499,12 @@ int main(int argc, char **argv){
                     pthread_create(&tid, NULL, playGame, &lobbies[lobbyID]); 
                     // wywołanie powoduje memory leak na 16 Bajtów, no trudno, nienawidzę c
                 }
-                //heartbeat.insert({clientFD, chrono::steady_clock::now()});
             } else {
                 // Obsługa klienta - serwer główny, czyli rozłączenie
-                //testClient3(events[i].data.fd, epollFD, &event);
                 cout << "ojojoj klient się wykrzaczył"<<endl;
                 disconnectClient(events[i].data.fd, serverEpollFD, &event);
-                //heartbeat[events[i].data.fd] = chrono::steady_clock::now();
             }
         }
-        //nie działa
-        //mam pomysł jak to zrobić łatwiej i prościej
-        /*for(auto iter = heartbeat.cbegin(), next_iter = iter; iter != heartbeat.cend(); iter = next_iter){
-            if(((chrono::steady_clock::now()-iter->second).count())/1000000.0 > timeout){
-                //client dead
-                close(iter->first);
-                epoll_ctl(epollFD, EPOLL_CTL_DEL, iter->first, &event);
-                heartbeat.erase(iter->first);
-            }
-        }*/
     }
 
     // To się nigdy nie wykona, ale dla poprawności...
