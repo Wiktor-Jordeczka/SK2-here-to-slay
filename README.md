@@ -26,7 +26,7 @@ Testowane na: Windows 10, OpenSUSE.
     - SK.exe - wersja na Windows
     - SK.x86_64 - wersja na Linux
 - Pobrany plik pakietu wraz z odpowiednim skompilowanym programem należy umieścić w jednym folderze
-- Uruchamiamy program klienta. W przypadku systemów z rodziny Linux należy wcześniej nadać mu prawo do wykonywania
+- Uruchamiamy program klienta. W przypadku systemów z rodziny Linux należy wcześniej nadać mu prawo do wykonywania, a następnie uruchomić z wykorzystaniem terminala.
 - W otwartym okienku wybieramy opcję "połączenie"
 - Konfigurujemy adres ip serwera na taki, jaki ma komputer, na którym uruchomiono serwer (Serwer korzysta z INADDR_ANY)
 - Numer portu pozostawiamy na domyślnym 44444
