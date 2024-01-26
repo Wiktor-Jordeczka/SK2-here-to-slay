@@ -35,7 +35,6 @@ func _process(delta: float) -> void:
 		if available_bytes > 0:
 			print("available bytes: ", available_bytes)
 			var data = _stream.get_partial_data(256)
-			# Check for read error.
 			if data[0] != OK:
 				print("Error getting data from stream: ", data[0])
 				emit_signal("error")
@@ -46,7 +45,6 @@ func _process(delta: float) -> void:
 
 func connect_to_host(host: String, port: int) -> void:
 	print("Connecting to %s:%d" % [host, port])
-	# Reset status so we can tell if it changes to error again.
 	_status = _stream.STATUS_NONE
 	#print(_stream.connect_to_host(host, port))
 	if _stream.connect_to_host(host, port) != OK:
