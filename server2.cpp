@@ -429,7 +429,7 @@ int main(int argc, char **argv){
     sockaddr_in localAddress{
         .sin_family = AF_INET,
         .sin_port = htons(PORT),
-        .sin_addr = {htonl(INADDR_ANY)}
+        .sin_addr = {htonl(INADDR_ANY)} // Adres serwera
     };
 
     // Tworzymy gniazdo
