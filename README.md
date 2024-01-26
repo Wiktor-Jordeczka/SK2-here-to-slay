@@ -10,8 +10,8 @@ Testowane na: Windows 10, OpenSUSE.
 # Jak uruchomić / skompilować
 - Do kompilacji potrzebny jest kompilator g++ najlepiej w wersji 7.5.0
 - Należy pobrać z katalogu głównego repozytorium pliki:
-  - server.cpp
-  - db.h
+  - [server.cpp](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/server.cpp)
+  - [db.h](https://github.com/Wiktor-Jordeczka/SK2-here-to-slay/blob/main/db.h)
 - Pobrane pliki umieszczamy w jednym katalogu
 - W tym katalogu wywołujemy komendę:
   - g++ -pthread server.cpp
